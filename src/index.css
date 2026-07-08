@@ -1,0 +1,241 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0b0d12;
+  --panel: #12151c;
+  --panel-2: #171b24;
+  --line: #232836;
+  --muted: #8b93a7;
+  --text: #e7eaf0;
+  --brand: #6366f1;
+  --brand-2: #0ea5e9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", -apple-system, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--brand) 40%, transparent);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a3040;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a4358;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Aurora background */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.28;
+}
+.aurora::before {
+  background: radial-gradient(circle, #6366f1, transparent 70%);
+  top: -20%;
+  left: -10%;
+  animation: drift1 22s ease-in-out infinite;
+}
+.aurora::after {
+  background: radial-gradient(circle, #0ea5e9, transparent 70%);
+  bottom: -25%;
+  right: -10%;
+  animation: drift2 26s ease-in-out infinite;
+}
+@keyframes drift1 {
+  50% {
+    transform: translate(12vw, 8vh) scale(1.15);
+  }
+}
+@keyframes drift2 {
+  50% {
+    transform: translate(-10vw, -6vh) scale(1.1);
+  }
+}
+
+.glass {
+  background: color-mix(in srgb, var(--panel) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+.btn:hover {
+  border-color: #38405a;
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  border: none;
+  color: white;
+  box-shadow: 0 6px 20px -6px color-mix(in srgb, var(--brand) 70%, transparent);
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+.btn-ghost {
+  background: transparent;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+}
+.input {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border 0.15s;
+}
+.input:focus {
+  border-color: var(--brand);
+}
+textarea.input {
+  resize: vertical;
+  line-height: 1.5;
+}
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fade-in {
+  animation: fadeIn 0.35s ease both;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ------- Resume page (preview + print) ------- */
+.resume-page {
+  width: 816px; /* US Letter @ 96dpi */
+  min-height: 1056px;
+  background: #ffffff;
+  color: #1c1c1e;
+  padding: 48px;
+  box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+.resume-page-inner a {
+  color: inherit;
+}
+
+#print-root {
+  display: none;
+}
+
+/* ------- Print: show ONLY the resume ------- */
+@media print {
+  @page {
+    size: Letter;
+    margin: 0;
+  }
+  html,
+  body {
+    overflow: visible !important;
+    background: #fff !important;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  #print-root,
+  #print-root * {
+    visibility: visible !important;
+  }
+  #print-root {
+    position: absolute;
+    inset: 0;
+    display: block !important;
+  }
+  .resume-page {
+    box-shadow: none !important;
+    width: 100% !important;
+    min-height: auto !important;
+    margin: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
