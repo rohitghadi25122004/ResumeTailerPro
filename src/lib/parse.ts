@@ -15,7 +15,7 @@ export async function extractText(file: File): Promise<string> {
 async function extractPdf(file: File): Promise<string> {
   // Lazy-loaded so pdf.js stays out of the initial bundle.
   const pdfjsLib = await import("pdfjs-dist");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://unpkg.com/pdfjs-dist@4.9.155/build/pdf.worker.min.mjs";
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
   let out = "";
