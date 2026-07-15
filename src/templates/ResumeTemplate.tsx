@@ -330,17 +330,22 @@ function BoldLayout(c: Ctx) {
           <span>{c.data.contact.phone}</span>
           <span>{c.data.contact.email}</span>
           <span>{c.data.contact.location}</span>
-          {c.data.contact.links.map((l) => (
-            <a
-              key={l.label}
-              href={l.url.startsWith("http") ? l.url : `https://${l.url}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "#fff", textDecoration: "underline" }}
-            >
-              {l.label}
-            </a>
-          ))}
+          {c.data.contact.links.map((l) => {
+            const href = safeUrl(l.url);
+            return href ? (
+              <a
+                key={l.label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#fff", textDecoration: "underline" }}
+              >
+                {l.label}
+              </a>
+            ) : (
+              <span key={l.label} style={{ textDecoration: "underline" }}>{l.label}</span>
+            );
+          })}
         </div>
       </header>
       {orderedSections(c).map((k) => (
@@ -386,17 +391,22 @@ function SidebarLayout(c: Ctx) {
           <span>{c.data.contact.phone}</span>
           <span style={{ wordBreak: "break-all" }}>{c.data.contact.email}</span>
           <span>{c.data.contact.location}</span>
-          {c.data.contact.links.map((l) => (
-            <a
-              key={l.label}
-              href={l.url.startsWith("http") ? l.url : `https://${l.url}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "#fff", textDecoration: "underline", wordBreak: "break-all" }}
-            >
-              {l.label}: {l.url.replace(/^https?:\/\//, "")}
-            </a>
-          ))}
+          {c.data.contact.links.map((l) => {
+            const href = safeUrl(l.url);
+            return href ? (
+              <a
+                key={l.label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#fff", textDecoration: "underline", wordBreak: "break-all" }}
+              >
+                {l.label}: {l.url.replace(/^https?:\/\//, "")}
+              </a>
+            ) : (
+              <span key={l.label} style={{ wordBreak: "break-all" }}>{l.label}</span>
+            );
+          })}
         </div>
       </div>
 
@@ -499,6 +509,24 @@ function SidebarSectionBody({ k, c }: { k: SectionKey; c: Ctx }) {
   );
 }
 
+// ---------- safe url helper ----------
+export function safeUrl(url: string | undefined | null): string {
+  if (!url || !url.trim()) return "";
+  const trimmed = url.trim();
+  // Check if it already has a protocol
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  // Check if it's an email address
+  if (trimmed.includes("@") && !trimmed.includes("/")) {
+    return `mailto:${trimmed}`;
+  }
+  // Validate that it doesn't resolve to just "https://"
+  const cleanUrl = trimmed.replace(/^\/+/, "");
+  if (!cleanUrl) return "";
+  return `https://${cleanUrl}`;
+}
+
 // ---------- shared contact line ----------
 function ContactLine({ c, align, muted }: { c: Ctx; align: "center" | "left"; muted?: boolean }) {
   const { phone, email, links } = c.data.contact;
@@ -517,19 +545,26 @@ function ContactLine({ c, align, muted }: { c: Ctx; align: "center" | "left"; mu
       <span>{phone}</span>
       <Sep />
       <span>{email}</span>
-      {links.map((l) => (
-        <React.Fragment key={l.label}>
-          <Sep />
-          <a
-            href={l.url.startsWith("http") ? l.url : `https://${l.url}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: c.accent, textDecoration: "underline" }}
-          >
-            {l.label}
-          </a>
-        </React.Fragment>
-      ))}
+      {links.map((l) => {
+        const href = safeUrl(l.url);
+        return (
+          <React.Fragment key={l.label}>
+            <Sep />
+            {href ? (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: c.accent, textDecoration: "underline" }}
+              >
+                {l.label}
+              </a>
+            ) : (
+              <span style={{ textDecoration: "underline" }}>{l.label}</span>
+            )}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }

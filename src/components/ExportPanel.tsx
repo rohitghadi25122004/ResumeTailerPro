@@ -1,8 +1,8 @@
-import { FileText, FileType, Braces, Code2, Printer, RotateCcw, Trash2, Save, Lightbulb, FileDown } from "lucide-react";
+import { FileText, FileType, Braces, Code2, RotateCcw, Trash2, Save, Lightbulb, FileDown } from "lucide-react";
 import { useState } from "react";
 import { useResumeStore } from "../store/useResumeStore";
 import { getTemplate } from "../templates/registry";
-import { exportPDF, exportDirectPDF, exportDOCX, exportJSON, exportHTML } from "../lib/export";
+import { exportDirectPDF, exportDOCX, exportJSON, exportHTML } from "../lib/export";
 import { PreviewPane } from "./PreviewPane";
 
 export function ExportPanel() {
@@ -13,7 +13,6 @@ export function ExportPanel() {
 
   const options = [
     { icon: <FileDown size={20} />, title: "Direct PDF Download", desc: "Instantly downloads a clean, print-ready PDF file directly to your device.", cta: "Download PDF", tint: "#10b981", run: () => exportDirectPDF(working) },
-    { icon: <Printer size={20} />, title: "Print / Save via Browser", desc: "Opens the print dialog — choose “Save as PDF” for browser-rendered PDFs.", cta: "Print Resume", tint: "#ef4444", run: exportPDF },
     { icon: <FileType size={20} />, title: "Editable DOCX", desc: "Word-compatible document you can keep editing. Opens in Word / Google Docs.", cta: "Export DOCX", tint: "#2563eb", run: () => exportDOCX(working, accent) },
     { icon: <Code2 size={20} />, title: "Standalone HTML", desc: "Self-contained styled web page — great for online portfolios.", cta: "Export HTML", tint: "#f59e0b", run: () => exportHTML(working, accent) },
     { icon: <Braces size={20} />, title: "JSON data", desc: "Structured resume data for backups or importing elsewhere.", cta: "Export JSON", tint: "#6366f1", run: () => exportJSON(working) },
@@ -34,20 +33,6 @@ export function ExportPanel() {
               <button className="btn btn-primary mt-3 justify-center" onClick={o.run}>{o.cta}</button>
             </div>
           ))}
-        </div>
-
-        <div className="mt-4 flex gap-3 rounded-xl border border-[var(--line)] bg-[var(--panel-2)] p-3.5">
-          <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-amber-400/15 text-amber-300">
-            <Lightbulb size={16} />
-          </span>
-          <div className="min-w-0">
-            <div className="text-sm font-semibold">Saving as PDF</div>
-            <p className="mt-0.5 text-xs leading-relaxed text-[var(--muted)]">
-              In the print dialog, pick <b className="text-[var(--text)]">Save as PDF</b>, set{" "}
-              <b className="text-[var(--text)]">Margins → None</b>, and turn on{" "}
-              <b className="text-[var(--text)]">Background graphics</b> so colored templates keep their color.
-            </p>
-          </div>
         </div>
 
         {/* Versions */}

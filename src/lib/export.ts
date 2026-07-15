@@ -1,6 +1,7 @@
 import type { ResumeData } from "../types";
 // @ts-ignore
 import html2pdf from "html2pdf.js";
+import { safeUrl } from "../templates/ResumeTemplate";
 
 function download(filename: string, content: string, mime: string) {
   const blob = new Blob([content], { type: mime });
@@ -111,7 +112,10 @@ export function exportHTML(r: ResumeData, accent: string) {
   const body = r.sectionOrder.map((k) => blocks[k] ?? "").join("");
   const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(r.contact.name)} — Resume</title>
 <style>body{font-family:Georgia,'Times New Roman',serif;max-width:800px;margin:32px auto;padding:0 32px;color:#1a1a1a;line-height:1.4;font-size:13.5px}h1{margin:0;text-align:center;font-size:26px}.contact{text-align:center;color:#444;margin:4px 0 8px;font-size:13px}a{color:${accent}}@media print{body{margin:0}}</style></head>
-<body><h1>${esc(r.contact.name)}</h1><div class="contact">${esc(r.contact.phone)} | ${esc(r.contact.email)} | ${r.contact.links.map((l) => `<a href="${esc(l.url.startsWith("http") ? l.url : "https://" + l.url)}">${esc(l.label)}</a>`).join(" | ")}</div>${body}</body></html>`;
+<body><h1>${esc(r.contact.name)}</h1><div class="contact">${esc(r.contact.phone)} | ${esc(r.contact.email)} | ${r.contact.links.map((l) => {
+    const href = safeUrl(l.url);
+    return href ? `<a href="${esc(href)}">${esc(l.label)}</a>` : esc(l.label);
+  }).join(" | ")}</div>${body}</body></html>`;
 
   download(`${safeName(r)}_resume.html`, html, "text/html");
 }
@@ -167,7 +171,10 @@ export function exportDOCX(r: ResumeData, accent: string) {
   const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Resume</title></head>
 <body style="font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1a1a1a">
 <p style="text-align:center;font-size:20pt;font-weight:bold;margin:0">${esc(r.contact.name)}</p>
-<p style="text-align:center;margin:0 0 8px">${esc(r.contact.phone)} | ${esc(r.contact.email)} | ${r.contact.links.map((l) => `<a href="${esc(l.url.startsWith("http") ? l.url : "https://" + l.url)}" style="color:${accent}">${esc(l.label)}</a>`).join(" | ")}</p>
+<p style="text-align:center;margin:0 0 8px">${esc(r.contact.phone)} | ${esc(r.contact.email)} | ${r.contact.links.map((l) => {
+  const href = safeUrl(l.url);
+  return href ? `<a href="${esc(href)}" style="color:${accent}">${esc(l.label)}</a>` : esc(l.label);
+}).join(" | ")}</p>
 ${body}</body></html>`;
 
   download(`${safeName(r)}_resume.doc`, doc, "application/msword");
