@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "framer-motion": "^11.11.17",
+    "html2pdf.js": "^0.14.0",
     "lucide-react": "^0.468.0",
     "mammoth": "^1.8.0",
     "pdfjs-dist": "^4.9.155",

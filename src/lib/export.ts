@@ -1,4 +1,6 @@
 import type { ResumeData } from "../types";
+// @ts-ignore
+import html2pdf from "html2pdf.js";
 
 function download(filename: string, content: string, mime: string) {
   const blob = new Blob([content], { type: mime });
@@ -22,6 +24,29 @@ export function exportJSON(r: ResumeData) {
 /** Print-to-PDF: triggers the browser print dialog on the print-only resume node. */
 export function exportPDF() {
   window.print();
+}
+
+/** Direct-to-PDF: renders print-root directly using html2pdf and downloads the file. */
+export function exportDirectPDF(r: ResumeData) {
+  const element = document.querySelector("#print-root .resume-page");
+  if (!element) {
+    window.print();
+    return;
+  }
+
+  const opt: any = {
+    margin: 0,
+    filename: `${safeName(r)}_resume.pdf`,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: {
+      scale: 2.5,
+      useCORS: true,
+      letterRendering: true
+    },
+    jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+  };
+
+  html2pdf().set(opt).from(element as HTMLElement).save();
 }
 
 function esc(s: string) {

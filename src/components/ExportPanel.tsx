@@ -1,8 +1,8 @@
-import { FileText, FileType, Braces, Code2, Printer, RotateCcw, Trash2, Save, Lightbulb } from "lucide-react";
+import { FileText, FileType, Braces, Code2, Printer, RotateCcw, Trash2, Save, Lightbulb, FileDown } from "lucide-react";
 import { useState } from "react";
 import { useResumeStore } from "../store/useResumeStore";
 import { getTemplate } from "../templates/registry";
-import { exportPDF, exportDOCX, exportJSON, exportHTML } from "../lib/export";
+import { exportPDF, exportDirectPDF, exportDOCX, exportJSON, exportHTML } from "../lib/export";
 import { PreviewPane } from "./PreviewPane";
 
 export function ExportPanel() {
@@ -12,10 +12,11 @@ export function ExportPanel() {
   const [saved, setSaved] = useState(false);
 
   const options = [
-    { icon: <Printer size={20} />, title: "Print-ready PDF", desc: "Opens the print dialog — choose “Save as PDF”. Pixel-perfect to the preview.", cta: "Export PDF", tint: "#ef4444", run: exportPDF },
+    { icon: <FileDown size={20} />, title: "Direct PDF Download", desc: "Instantly downloads a clean, print-ready PDF file directly to your device.", cta: "Download PDF", tint: "#10b981", run: () => exportDirectPDF(working) },
+    { icon: <Printer size={20} />, title: "Print / Save via Browser", desc: "Opens the print dialog — choose “Save as PDF” for browser-rendered PDFs.", cta: "Print Resume", tint: "#ef4444", run: exportPDF },
     { icon: <FileType size={20} />, title: "Editable DOCX", desc: "Word-compatible document you can keep editing. Opens in Word / Google Docs.", cta: "Export DOCX", tint: "#2563eb", run: () => exportDOCX(working, accent) },
     { icon: <Code2 size={20} />, title: "Standalone HTML", desc: "Self-contained styled web page — great for online portfolios.", cta: "Export HTML", tint: "#f59e0b", run: () => exportHTML(working, accent) },
-    { icon: <Braces size={20} />, title: "JSON data", desc: "Structured resume data for backups or importing elsewhere.", cta: "Export JSON", tint: "#10b981", run: () => exportJSON(working) },
+    { icon: <Braces size={20} />, title: "JSON data", desc: "Structured resume data for backups or importing elsewhere.", cta: "Export JSON", tint: "#6366f1", run: () => exportJSON(working) },
   ];
 
   return (
