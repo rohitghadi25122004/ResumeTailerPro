@@ -331,7 +331,15 @@ function BoldLayout(c: Ctx) {
           <span>{c.data.contact.email}</span>
           <span>{c.data.contact.location}</span>
           {c.data.contact.links.map((l) => (
-            <span key={l.label} style={{ textDecoration: "underline" }}>{l.label}</span>
+            <a
+              key={l.label}
+              href={l.url.startsWith("http") ? l.url : `https://${l.url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#fff", textDecoration: "underline" }}
+            >
+              {l.label}
+            </a>
           ))}
         </div>
       </header>
@@ -379,7 +387,15 @@ function SidebarLayout(c: Ctx) {
           <span style={{ wordBreak: "break-all" }}>{c.data.contact.email}</span>
           <span>{c.data.contact.location}</span>
           {c.data.contact.links.map((l) => (
-            <span key={l.label} style={{ wordBreak: "break-all" }}>{l.label}: {l.url.replace(/^https?:\/\//, "")}</span>
+            <a
+              key={l.label}
+              href={l.url.startsWith("http") ? l.url : `https://${l.url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#fff", textDecoration: "underline", wordBreak: "break-all" }}
+            >
+              {l.label}: {l.url.replace(/^https?:\/\//, "")}
+            </a>
           ))}
         </div>
       </div>
@@ -504,7 +520,14 @@ function ContactLine({ c, align, muted }: { c: Ctx; align: "center" | "left"; mu
       {links.map((l) => (
         <React.Fragment key={l.label}>
           <Sep />
-          <span style={{ color: c.accent, textDecoration: "underline" }}>{l.label}</span>
+          <a
+            href={l.url.startsWith("http") ? l.url : `https://${l.url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: c.accent, textDecoration: "underline" }}
+          >
+            {l.label}
+          </a>
         </React.Fragment>
       ))}
     </div>
