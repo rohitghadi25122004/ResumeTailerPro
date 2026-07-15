@@ -29,25 +29,45 @@ export function exportPDF() {
 
 /** Direct-to-PDF: renders print-root directly using html2pdf and downloads the file. */
 export function exportDirectPDF(r: ResumeData) {
+  const printRoot = document.getElementById("print-root");
   const element = document.querySelector("#print-root .resume-page");
-  if (!element) {
+  if (!printRoot || !element) {
     window.print();
     return;
   }
+
+  // Save original style to restore it later
+  const originalStyle = printRoot.style.cssText;
+  
+  // Bring printRoot to (0,0) offscreen/faded so client bounding box matches PDF origin
+  printRoot.style.cssText = "position: fixed; left: 0; top: 0; z-index: -9999; opacity: 0.01; pointer-events: none;";
 
   const opt: any = {
     margin: 0,
     filename: `${safeName(r)}_resume.pdf`,
     image: { type: "jpeg", quality: 0.98 },
+    enableLinks: true,
     html2canvas: {
       scale: 2.5,
       useCORS: true,
-      letterRendering: true
+      letterRendering: true,
+      scrollX: 0,
+      scrollY: 0
     },
     jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
   };
 
-  html2pdf().set(opt).from(element as HTMLElement).save();
+  html2pdf()
+    .set(opt)
+    .from(element as HTMLElement)
+    .save()
+    .then(() => {
+      printRoot.style.cssText = originalStyle;
+    })
+    .catch((err: any) => {
+      console.error("PDF generation failed:", err);
+      printRoot.style.cssText = originalStyle;
+    });
 }
 
 function esc(s: string) {

@@ -1,8 +1,8 @@
-import { FileText, FileType, Braces, Code2, RotateCcw, Trash2, Save, Lightbulb, FileDown } from "lucide-react";
+import { FileText, FileType, Braces, Code2, RotateCcw, Trash2, Save, Lightbulb, FileDown, Printer } from "lucide-react";
 import { useState } from "react";
 import { useResumeStore } from "../store/useResumeStore";
 import { getTemplate } from "../templates/registry";
-import { exportDirectPDF, exportDOCX, exportJSON, exportHTML } from "../lib/export";
+import { exportPDF, exportDirectPDF, exportDOCX, exportJSON, exportHTML } from "../lib/export";
 import { PreviewPane } from "./PreviewPane";
 
 export function ExportPanel() {
@@ -12,7 +12,8 @@ export function ExportPanel() {
   const [saved, setSaved] = useState(false);
 
   const options = [
-    { icon: <FileDown size={20} />, title: "Direct PDF Download", desc: "Instantly downloads a clean, print-ready PDF file directly to your device.", cta: "Download PDF", tint: "#10b981", run: () => exportDirectPDF(working) },
+    { icon: <Printer size={20} />, title: "PDF Document (Recommended)", desc: "Preserves clickable hyperlinks and searchable text. Opens print dialog — choose 'Save as PDF'.", cta: "Download PDF", tint: "#ef4444", run: exportPDF },
+    { icon: <FileDown size={20} />, title: "Quick PDF (Image Mode)", desc: "Downloads instantly. Note: Hyperlinks and text selection are not active in this mode.", cta: "Direct Download", tint: "#10b981", run: () => exportDirectPDF(working) },
     { icon: <FileType size={20} />, title: "Editable DOCX", desc: "Word-compatible document you can keep editing. Opens in Word / Google Docs.", cta: "Export DOCX", tint: "#2563eb", run: () => exportDOCX(working, accent) },
     { icon: <Code2 size={20} />, title: "Standalone HTML", desc: "Self-contained styled web page — great for online portfolios.", cta: "Export HTML", tint: "#f59e0b", run: () => exportHTML(working, accent) },
     { icon: <Braces size={20} />, title: "JSON data", desc: "Structured resume data for backups or importing elsewhere.", cta: "Export JSON", tint: "#6366f1", run: () => exportJSON(working) },
@@ -33,6 +34,18 @@ export function ExportPanel() {
               <button className="btn btn-primary mt-3 justify-center" onClick={o.run}>{o.cta}</button>
             </div>
           ))}
+        </div>
+
+        <div className="mt-4 flex gap-3 rounded-xl border border-[var(--line)] bg-[var(--panel-2)] p-3.5">
+          <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-amber-400/15 text-amber-300">
+            <Lightbulb size={16} />
+          </span>
+          <div className="min-w-0">
+            <div className="text-sm font-semibold">Recommended PDF Instructions</div>
+            <p className="mt-0.5 text-xs leading-relaxed text-[var(--muted)]">
+              To keep links clickable and text selectable (best for ATS): click <b className="text-[var(--text)]">Download PDF</b>, pick <b className="text-[var(--text)]">Save as PDF</b> in the print dialog, set <b className="text-[var(--text)]">Margins → None</b>, and enable <b className="text-[var(--text)]">Background graphics</b>.
+            </p>
+          </div>
         </div>
 
         {/* Versions */}
