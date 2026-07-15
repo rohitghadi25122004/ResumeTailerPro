@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { useResumeStore } from "../store/useResumeStore";
 import { getTemplate } from "../templates/registry";
@@ -98,12 +99,13 @@ export function PreviewPane() {
 export function PrintRoot() {
   const { working, templateId, design } = useResumeStore();
   const template = getTemplate(templateId);
-  return (
+  return createPortal(
     <div id="print-root">
       <div className="resume-page">
         <ResumeTemplate data={working} template={template} design={design} />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
